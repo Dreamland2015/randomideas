@@ -35,18 +35,24 @@ private static class Bench extends LXModel
   private static final int NLEDS = 10;
   private static final int LEDS_SPACING = 3 * INCHES;
 
+  public final List<Bar> wings;
+
   Bench()
   {
     super(new Fixture());
+    Fixture f = (Fixture) this.fixtures.get(0);
+    this.wings = Collections.unmodifiableList(f.wings);
   }
 
   private static class Fixture extends LXAbstractFixture
   {
+    private List<Bar> wings = new ArrayList<Bar>();
     Fixture()
     {
       LXTransform transform = new LXTransform();
-      Bar  bar = new Bar(transform);
+      Bar bar = new Bar(transform);
       addPoints(bar);
+      this.wings.add(bar);
     }
   }
 
@@ -59,7 +65,7 @@ private static class Bench extends LXModel
 
     private static class Fixture extends LXAbstractFixture
     {
-      fixture(LXTransform transform)
+      Fixture(LXTransform transform)
       {
         transform.push();
         for (int i = 0; i < NLEDS; i ++)
@@ -72,3 +78,4 @@ private static class Bench extends LXModel
     }
   }
 }
+

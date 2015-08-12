@@ -3,20 +3,22 @@ import processing.data.*;
 import processing.event.*; 
 import processing.opengl.*; 
 
-import ddf.minim.*; 
 import heronarts.lx.*; 
 import heronarts.lx.audio.*; 
 import heronarts.lx.color.*; 
 import heronarts.lx.model.*; 
 import heronarts.lx.modulator.*; 
+import heronarts.lx.output.*; 
 import heronarts.lx.parameter.*; 
 import heronarts.lx.pattern.*; 
-import heronarts.lx.transform.*; 
 import heronarts.lx.transition.*; 
+import heronarts.lx.transform.*; 
 import heronarts.p2lx.*; 
 import heronarts.p2lx.ui.*; 
 import heronarts.p2lx.ui.control.*; 
+import ddf.minim.*; 
 import processing.opengl.*; 
+import java.util.*; 
 import java.net.*; 
 import java.util.Arrays; 
 
@@ -52,6 +54,8 @@ import java.io.IOException;
 public class P2LXDemo extends PApplet {
 
 // Get all our imports out of the way
+
+
 
 
 
@@ -187,18 +191,24 @@ private static class Bench extends LXModel
   private static final int NLEDS = 10;
   private static final int LEDS_SPACING = 3 * INCHES;
 
+  public final List<Bar> wings;
+
   Bench()
   {
     super(new Fixture());
+    Fixture f = (Fixture) this.fixtures.get(0);
+    this.wings = Collections.unmodifiableList(f.wings);
   }
 
   private static class Fixture extends LXAbstractFixture
   {
+    private List<Bar> wings = new ArrayList<Bar>();
     Fixture()
     {
       LXTransform transform = new LXTransform();
-      Bar  bar = new Bar(transform);
+      Bar bar = new Bar(transform);
       addPoints(bar);
+      this.wings.add(bar);
     }
   }
 
@@ -211,7 +221,7 @@ private static class Bench extends LXModel
 
     private static class Fixture extends LXAbstractFixture
     {
-      fixture(LXTransform transform)
+      Fixture(LXTransform transform)
       {
         transform.push();
         for (int i = 0; i < NLEDS; i ++)
@@ -224,6 +234,7 @@ private static class Bench extends LXModel
     }
   }
 }
+
 /*
  * Simple Open Pixel Control client for Processing,
  * designed to sample each LED's color from some point on the canvas.
