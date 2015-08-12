@@ -98,9 +98,11 @@ public class FixtureDemo extends PApplet {
 
 
 
-// Let's work in inches
+// Lets work in inches and feet
 final static int INCHES = 1;
 final static int FEET = 12*INCHES;
+
+// Lets create a variable for the pub/sub connection
 Float rotationPosition = 0f;
 
 // Top-level, we have a model and a P2LX instance
@@ -118,6 +120,12 @@ public void setup()
   
   // Create the P2LX engine
   lx = new P2LX(this, model);
+
+  // Build the fadecandy outputs
+  buildOutputs();
+  
+  // Start the subscriber class in another thread
+  thread("Subscriber");
   
   // Set the patterns
   lx.setPatterns(new LXPattern[] 
@@ -133,31 +141,31 @@ public void setup()
     new TestHuePattern(lx),
     new TestYPattern(lx),
     new TestZPattern(lx),
-      new Bouncing(lx),
-      new Cascade(lx),
-      new CrazyWaves(lx), 
-      new CrossSections(lx),
-      new DFC(lx),   
-      new LayerDemoPattern(lx), 
-      new ParameterWave(lx),
-      new Pulley(lx), 
-      new Pulse(lx),
-      new RainbowInsanity(lx), 
-      new SeeSaw(lx), 
-      new ShiftingPlane(lx), 
-      new SparkleTakeOver(lx), 
-      new Stripes(lx), 
-      new Strobe(lx),
-      new SweepPattern(lx),
-      new Twinkle(lx), 
-      new block(lx), 
-      new candycloudstar(lx),
-      new rainbowfade(lx),  
-      new rainbowfadeauto(lx), 
-      new um(lx), 
-      new um2(lx), 
-      new um3_lists(lx),   
-        new MultiSine(lx), 
+    new Bouncing(lx),
+    new Cascade(lx),
+    new CrazyWaves(lx), 
+    new CrossSections(lx),
+    new DFC(lx),   
+    new LayerDemoPattern(lx), 
+    new ParameterWave(lx),
+    new Pulley(lx), 
+    new Pulse(lx),
+    new RainbowInsanity(lx), 
+    new SeeSaw(lx), 
+    new ShiftingPlane(lx), 
+    new SparkleTakeOver(lx), 
+    new Stripes(lx), 
+    new Strobe(lx),
+    new SweepPattern(lx),
+    new Twinkle(lx), 
+    new block(lx), 
+    new candycloudstar(lx),
+    new rainbowfade(lx),  
+    new rainbowfadeauto(lx), 
+    new um(lx), 
+    new um2(lx), 
+    new um3_lists(lx),   
+    new MultiSine(lx), 
   });
   
   // Add UI elements
@@ -206,10 +214,6 @@ public void setup()
   lx.ui.addLayer(new UIChannelControl(lx.ui, lx.engine.getChannel(0), 4, 4));
   lx.ui.addLayer(new UIEngineControl(lx.ui, 4, 326));
   lx.ui.addLayer(new UIComponentsDemo(lx.ui, width-144, 4));
-
-
-  // buildOutputs();
-  thread("psenvsub");
 }
 
 
@@ -245,8 +249,8 @@ static class Model extends LXModel
 
     private Fixture() 
     {
-      for (int i = 0; i < 10; ++i) {
-        StripModel strip = new StripModel(50, i);
+      for (int i = 0; i < 2; ++i) {
+        StripModel strip = new StripModel(34, i);
         addPoints(strip);
         this.strips.add(strip);
       }
@@ -271,7 +275,7 @@ public static class StripModel extends LXModel {
   private static class Fixture extends LXAbstractFixture {
     private Fixture(int length, int y) {
       for (int i = 0; i < length; ++i) {
-        addPoint(new LXPoint(i *6, y * 12, 0));
+        addPoint(new LXPoint(i * 1, y * 1, 0));
       }
     }
   }
@@ -633,10 +637,12 @@ public class OPC
 class PythonProjection extends LXPattern 
 {
   private final LXProjection rotation;
+  private final BasicParameter thick = new BasicParameter("thick", 0.1f, 0, 200);
 
   public PythonProjection(LX lx) {
     super(lx);
     rotation = new LXProjection(model);
+    addParameter(thick);
   }
 
   public void run(double deltaMs) 
@@ -646,7 +652,7 @@ class PythonProjection extends LXPattern
     rotation.rotateZ(rotationPosition); // or whatever is appropriate
     float hv = lx.getBaseHuef();
     for (LXVector c : rotation) {
-      float d = max(0, abs(c.y) - 10 + .1f*abs(c.z) + .02f*abs(c.x)); // plane / spear thing
+      float d = max(0, abs(c.y) - thick.getValuef() + .1f*abs(c.z) + .02f*abs(c.x)); // plane / spear thing
       colors[c.index] = lx.hsb(
         100,
         100,
@@ -893,7 +899,7 @@ class SolidColor extends LXPattern
 {
   private final float modelMin = model.xMin - 50;
   private final float modelMax = model.xMax + 50;
-  private final BasicParameter hueValue = new BasicParameter("Hue", 100, 0, 255);
+  private final BasicParameter hueValue = new BasicParameter("Hue", 100, 0, 360);
   private final BasicParameter satValue = new BasicParameter("Sat", 100, 0, 100);
   private final BasicParameter briValue = new BasicParameter("Bright", 100, 0, 100);
 
@@ -1135,7 +1141,7 @@ class rainbowfadeauto extends LXPattern {
   private final SinLFO ysign = new SinLFO(1, -1, 10548);
   private final SinLFO xsign = new SinLFO(-1, 1, 7893);
   private final SinLFO zsign = new SinLFO(1, -1, 6211);
-  private final BasicParameter size = new BasicParameter("size", 2, 1.4f, 8);
+  private final BasicParameter size = new BasicParameter("size", 2, .5f, 8);
   //private final BasicParameter ysign = new BasicParameter("ys", -1, -1, 1);
   //private final BasicParameter xsign = new BasicParameter("xs", -1, -1, 1);
   //private final BasicParameter zsign = new BasicParameter("zs", -1, -1, 1);
@@ -3766,11 +3772,11 @@ class UIComponentsDemo extends UIWindow {
 
 public void buildOutputs()
 {
-	lx.addOutput(new FadecandyOutput(lx, "localhost", 7890));
+	lx.addOutput(new FadecandyOutput(lx, "pi15.local", 7890));
 }
 
 
-public void psenvsub () {
+public void Subscriber () {
     // Prepare our context and subscriber
     ZMQ.Context context = ZMQ.context(1);
     ZMQ.Socket subscriber = context.socket(ZMQ.SUB);

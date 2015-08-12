@@ -30,3 +30,45 @@ static class Model extends LXModel
   }
 }
 
+private static class Bench extends LXModel
+{
+  private static final int NLEDS = 10;
+  private static final int LEDS_SPACING = 3 * INCHES;
+
+  Bench()
+  {
+    super(new Fixture());
+  }
+
+  private static class Fixture extends LXAbstractFixture
+  {
+    Fixture()
+    {
+      LXTransform transform = new LXTransform();
+      Bar  bar = new Bar(transform);
+      addPoints(bar);
+    }
+  }
+
+  private static class Bar extends LXModel
+  {
+    public Bar(LXTransform transform)
+    {
+      super(new Fixture(transform));
+    }
+
+    private static class Fixture extends LXAbstractFixture
+    {
+      fixture(LXTransform transform)
+      {
+        transform.push();
+        for (int i = 0; i < NLEDS; i ++)
+        {
+          addPoint(new LXPoint(transform));
+          transform.translate(LEDS_SPACING, 0, 0);
+        }
+        transform.pop();
+      }
+    }
+  }
+}

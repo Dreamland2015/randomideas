@@ -17,9 +17,11 @@ import toxi.geom.Vec2D;
 import toxi.math.noise.PerlinNoise;
 import toxi.math.noise.SimplexNoise;
 
-// Let's work in inches
+// Lets work in inches and feet
 final static int INCHES = 1;
 final static int FEET = 12*INCHES;
+
+// Lets create a variable for the pub/sub connection
 Float rotationPosition = 0f;
 
 // Top-level, we have a model and a P2LX instance
@@ -37,6 +39,12 @@ void setup()
   
   // Create the P2LX engine
   lx = new P2LX(this, model);
+
+  // Build the fadecandy outputs
+  buildOutputs();
+  
+  // Start the subscriber class in another thread
+  thread("Subscriber");
   
   // Set the patterns
   lx.setPatterns(new LXPattern[] 
@@ -52,31 +60,31 @@ void setup()
     new TestHuePattern(lx),
     new TestYPattern(lx),
     new TestZPattern(lx),
-      new Bouncing(lx),
-      new Cascade(lx),
-      new CrazyWaves(lx), 
-      new CrossSections(lx),
-      new DFC(lx),   
-      new LayerDemoPattern(lx), 
-      new ParameterWave(lx),
-      new Pulley(lx), 
-      new Pulse(lx),
-      new RainbowInsanity(lx), 
-      new SeeSaw(lx), 
-      new ShiftingPlane(lx), 
-      new SparkleTakeOver(lx), 
-      new Stripes(lx), 
-      new Strobe(lx),
-      new SweepPattern(lx),
-      new Twinkle(lx), 
-      new block(lx), 
-      new candycloudstar(lx),
-      new rainbowfade(lx),  
-      new rainbowfadeauto(lx), 
-      new um(lx), 
-      new um2(lx), 
-      new um3_lists(lx),   
-        new MultiSine(lx), 
+    new Bouncing(lx),
+    new Cascade(lx),
+    new CrazyWaves(lx), 
+    new CrossSections(lx),
+    new DFC(lx),   
+    new LayerDemoPattern(lx), 
+    new ParameterWave(lx),
+    new Pulley(lx), 
+    new Pulse(lx),
+    new RainbowInsanity(lx), 
+    new SeeSaw(lx), 
+    new ShiftingPlane(lx), 
+    new SparkleTakeOver(lx), 
+    new Stripes(lx), 
+    new Strobe(lx),
+    new SweepPattern(lx),
+    new Twinkle(lx), 
+    new block(lx), 
+    new candycloudstar(lx),
+    new rainbowfade(lx),  
+    new rainbowfadeauto(lx), 
+    new um(lx), 
+    new um2(lx), 
+    new um3_lists(lx),   
+    new MultiSine(lx), 
   });
   
   // Add UI elements
@@ -125,10 +133,6 @@ void setup()
   lx.ui.addLayer(new UIChannelControl(lx.ui, lx.engine.getChannel(0), 4, 4));
   lx.ui.addLayer(new UIEngineControl(lx.ui, 4, 326));
   lx.ui.addLayer(new UIComponentsDemo(lx.ui, width-144, 4));
-
-
-  // buildOutputs();
-  thread("psenvsub");
 }
 
 

@@ -2,5 +2,5 @@
 
 void buildOutputs()
 {
-	lx.addOutput(new FadecandyOutput(lx, "localhost", 7890));
+	lx.addOutput(new FadecandyOutput(lx, "pi15.local", 7890));
 }

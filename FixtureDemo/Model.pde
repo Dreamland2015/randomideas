@@ -23,8 +23,8 @@ static class Model extends LXModel
 
     private Fixture() 
     {
-      for (int i = 0; i < 10; ++i) {
-        StripModel strip = new StripModel(50, i);
+      for (int i = 0; i < 2; ++i) {
+        StripModel strip = new StripModel(34, i);
         addPoints(strip);
         this.strips.add(strip);
       }
@@ -49,7 +49,7 @@ public static class StripModel extends LXModel {
   private static class Fixture extends LXAbstractFixture {
     private Fixture(int length, int y) {
       for (int i = 0; i < length; ++i) {
-        addPoint(new LXPoint(i *6, y * 12, 0));
+        addPoint(new LXPoint(i * 1, y * 1, 0));
       }
     }
   }

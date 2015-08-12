@@ -6,10 +6,12 @@
 class PythonProjection extends LXPattern 
 {
   private final LXProjection rotation;
+  private final BasicParameter thick = new BasicParameter("thick", 0.1, 0, 200);
 
   public PythonProjection(LX lx) {
     super(lx);
     rotation = new LXProjection(model);
+    addParameter(thick);
   }
 
   public void run(double deltaMs) 
@@ -19,7 +21,7 @@ class PythonProjection extends LXPattern
     rotation.rotateZ(rotationPosition); // or whatever is appropriate
     float hv = lx.getBaseHuef();
     for (LXVector c : rotation) {
-      float d = max(0, abs(c.y) - 10 + .1f*abs(c.z) + .02f*abs(c.x)); // plane / spear thing
+      float d = max(0, abs(c.y) - thick.getValuef() + .1f*abs(c.z) + .02f*abs(c.x)); // plane / spear thing
       colors[c.index] = lx.hsb(
         100,
         100,
@@ -266,7 +268,7 @@ class SolidColor extends LXPattern
 {
   private final float modelMin = model.xMin - 50;
   private final float modelMax = model.xMax + 50;
-  private final BasicParameter hueValue = new BasicParameter("Hue", 100, 0, 255);
+  private final BasicParameter hueValue = new BasicParameter("Hue", 100, 0, 360);
   private final BasicParameter satValue = new BasicParameter("Sat", 100, 0, 100);
   private final BasicParameter briValue = new BasicParameter("Bright", 100, 0, 100);
 

@@ -136,7 +136,7 @@ class rainbowfadeauto extends LXPattern {
   private final SinLFO ysign = new SinLFO(1, -1, 10548);
   private final SinLFO xsign = new SinLFO(-1, 1, 7893);
   private final SinLFO zsign = new SinLFO(1, -1, 6211);
-  private final BasicParameter size = new BasicParameter("size", 2, 1.4, 8);
+  private final BasicParameter size = new BasicParameter("size", 2, .5, 8);
   //private final BasicParameter ysign = new BasicParameter("ys", -1, -1, 1);
   //private final BasicParameter xsign = new BasicParameter("xs", -1, -1, 1);
   //private final BasicParameter zsign = new BasicParameter("zs", -1, -1, 1);
