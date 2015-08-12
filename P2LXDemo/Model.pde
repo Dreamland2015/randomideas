@@ -4,78 +4,106 @@
  */
 static class Model extends LXModel 
 {
+  public final Bench bench; 
+
   public Model() 
   {
     super(new Fixture());
+    Fixture f = (Fixture) this.fixtures.get(0);
+    this.bench = f.bench;
   }
   
   private static class Fixture extends LXAbstractFixture 
   {
-    
-    private static final int MATRIX_SIZE = 12;
-    
-    private Fixture() 
+    private final Bench bench;
+
+    private Fixture()
     {
-      // Here's the core loop where we generate the positions
-      // of the points in our model
-      for (int x = 0; x < MATRIX_SIZE; ++x) 
-      {
-        for (int y = 0; y < MATRIX_SIZE; ++y) 
-        {
-          // Add point to the fixture
-          addPoint(new LXPoint(x*FEET, y*FEET));
-        }
-      }
+      addPoints(this.bench = new Bench());
     }
   }
 }
 
-private static class Bench extends LXModel
-{
-  private static final int NLEDS = 10;
-  private static final int LEDS_SPACING = 3 * INCHES;
-
-  public final List<Bar> wings;
-
-  Bench()
-  {
+private static class Bench extends LXModel {
+  
+  private static final int NROWS = 2;
+  private static final int NLEDS = 4;
+  private static final int LED_SPACING = 3 * INCHES;
+  private static final int ANGLE = 120;
+  
+  public final List<Wing> wings;
+  
+  Bench() {
     super(new Fixture());
     Fixture f = (Fixture) this.fixtures.get(0);
     this.wings = Collections.unmodifiableList(f.wings);
-  }
-
-  private static class Fixture extends LXAbstractFixture
-  {
-    private List<Bar> wings = new ArrayList<Bar>();
-    Fixture()
+  } 
+  
+  private static class Fixture extends LXAbstractFixture {
+    
+    private List<Wing> wings = new ArrayList<Wing>();
+    
+    Fixture() 
     {
       LXTransform transform = new LXTransform();
-      Bar bar = new Bar(transform);
-      addPoints(bar);
-      this.wings.add(bar);
+      for (int i = 0; i < NROWS; i ++)
+      {
+        transform.translate(i * FEET ,0 , -i * FEET);
+        Wing wing = new Wing(transform);
+        this.wings.add(wing);
+        addPoints(wing); 
+      }
     }
   }
 
-  private static class Bar extends LXModel
+  private static class Wing extends LXModel
   {
-    public Bar(LXTransform transform)
+
+    public Wing(LXTransform transform)
     {
       super(new Fixture(transform));
     }
 
     private static class Fixture extends LXAbstractFixture
     {
+      private List<Bar> bars = new ArrayList<Bar>();  
       Fixture(LXTransform transform)
       {
         transform.push();
-        for (int i = 0; i < NLEDS; i ++)
-        {
+        transform.translate(- NLEDS * LED_SPACING + LED_SPACING ,0,0);
+        Bar bar = new Bar(NLEDS - 1, transform);
+        this.bars.add(bar);
+        addPoints(bar);
+        transform.pop();
+
+        transform.push();
+        transform.translate(0 ,0, 0);
+        transform.rotateY(radians(180 - ANGLE));
+        Bar bar2 = new Bar(NLEDS, transform);
+        this.bars.add(bar2);
+        addPoints(bar2);
+        transform.pop();
+
+      }
+    }
+  }
+  
+  private static class Bar extends LXModel {
+  
+  
+    public Bar(int numLeds, LXTransform transform) {
+      super(new Fixture(numLeds, transform));
+    }
+    
+    private static class Fixture extends LXAbstractFixture {
+      Fixture(int numLeds, LXTransform transform) {
+        transform.push();
+        for (int i = 0; i < numLeds; i++) {
           addPoint(new LXPoint(transform));
-          transform.translate(LEDS_SPACING, 0, 0);
+          transform.translate(LED_SPACING, 0, 0);
         }
         transform.pop();
       }
     }
   }
 }
-
